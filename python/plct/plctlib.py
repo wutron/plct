@@ -3,7 +3,31 @@ import networkx as nx
 
 from rasmus import treelib
 
-def is_reconcilable(tree, mapping='sli', annotate=False, return_conflicts=False):
+class Label:
+    """Species-specific locus"""
+
+    def __init__(self, species, locus):
+        self.species = species
+        self.locus = locus
+
+    def __str__(self):
+        return self.species + '-' + self.locus
+
+    def __repr__(self):
+        return "<label %s-%s>" % (self.species, self.locus)    
+
+    def __eq__(self, other):
+        return (self.species == other.species) and (self.locus == other.locus)
+
+    def __cmp__(self, other):
+        return cmp((self.species, self.locus), (other.species, other.locus))
+
+    def __hash__(self):
+        return hash((self.species, self.locus))
+        
+
+def is_reconcilable(tree, mapping='sli',
+                    annotate=False, return_conflicts=False, return_leg=False):
     """Given a tree, returns True if there exists conficting loci and False otherwise."""
     groupings = group_leaves(tree, mapping)
     create_plct(tree, groupings)
@@ -14,10 +38,12 @@ def is_reconcilable(tree, mapping='sli', annotate=False, return_conflicts=False)
     if annotate:
         annotate_tree(tree, conflicts)
 
+    return_vals = (flag_reconcilable,)
     if return_conflicts:
-        return flag_reconcilable, conflicts
-    else:
-        return flag_reconcilable
+        return_vals = return_vals + (conflicts,)
+    if return_leg:
+        return_vals = return_vals + (leg,)
+    return return_vals
 
 
 def group_leaves(tree, mapping='sli'):
@@ -40,7 +66,7 @@ def group_leaves(tree, mapping='sli'):
         else:
             raise Exception("mapping not supported: %s" % mapping)
 
-        label = (species, locus)
+        label = Label(species, locus)
         groupings[label].append(leaf)
 
     return groupings
@@ -69,7 +95,7 @@ def create_plct(tree, groupings, new_copy=False):
 def create_leg(plct, groupings):
     """Creates leg from plct and groupings."""
     leg = nx.Graph()
-    leg.add_nodes_from(groupings.keys()) # nodes = (species, locus)
+    leg.add_nodes_from(groupings.keys()) # nodes = Label(species, locus)
     for node in plct:
         labels = list(node.data["labels"]) # convert label set to label list
         nlabels = len(labels)
@@ -88,18 +114,17 @@ def get_conflicts(leg):
         loci_dct = collections.defaultdict(set)
 
         for label in cc:
-            species, locus = label
-            loci_dct[species].add(locus)
+            loci_dct[label.species].add(label.locus)
 
         for sp, loci in loci_dct.iteritems():
             # conflict if a species has more than one loci in this cc
             if len(loci) >= 2:
-                conflicts.add(tuple(cc))
+                conflicts.add(tuple(sorted(cc)))
                 break
     return conflicts
 
 
-def annotate(tree, conflicts):
+def annotate_tree(tree, conflicts):
     """Annotate tree."""
     # reconcilable => no labels on this branch are pairwise irreconcilable
     # reconcilable_cc => no labels on this branch are part of irreconcilable cc of leg
@@ -117,9 +142,7 @@ def annotate(tree, conflicts):
         for label in labels:
             if label in conflicting_labels:
                 node.data["reconcilable_cc"] = False
-
-            species, locus = label
-            loci_dct[species].add(locus)
+            loci_dct[label.species].add(label.locus)
 
         if node.is_leaf(): # a leaf always has a single label
             continue       # so there are no pairs to consider
@@ -128,4 +151,3 @@ def annotate(tree, conflicts):
             # conflict if a species has more than one loci
             if len(loci) >= 2:
                 node.data["reconcilable"] = False
-

@@ -21,8 +21,8 @@ setup(
 
     author='Yi-Chieh Wu',
     author_email='yjw@cs.hmc.edu',
-    url='http://www.hmc.edu/~yjw/plct/',
-    download_url='http://www.hmc.edu/~yjw/plct/pub/sw/plct-%s.tar.gz' % VERSION,
+    url='http://www.cs.hmc.edu/~yjw/software/plct/',
+    download_url='http://www.cs.hmc.edu/~yjw/software/plct/pub/sw/plct-%s.tar.gz' % VERSION,
 
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -40,6 +40,6 @@ setup(
     packages=['plct',
               'plct.deps.rasmus'],
     py_modules=[],
-    scripts=['bin/plct-conflict'],
+    scripts=['bin/plct-feasible'],
     ext_modules=[]
     )

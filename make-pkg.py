@@ -11,7 +11,9 @@ files = ["bin",
          "LICENSE.txt",
          "CHANGES.txt"]
 
-exclude = [".*\.pyc$"]
+exclude = [".*\.pyc$",
+           "examples/ex_infeasible_transitive.tree",
+           "examples/*.plct"]
 
 include = []
 

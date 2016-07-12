@@ -1,0 +1,25 @@
+PLCT:
+(
+ (
+  a_1_i:0.000000[&&NHX:labels=(a-1):reconcilable_cc=False],
+  (
+   a_1_ii:0.000000[&&NHX:labels=(a-1):reconcilable_cc=False],
+   b_1_i:0.000000[&&NHX:labels=(b-1):reconcilable_cc=False]
+  ):0.000000[&&NHX:reconcilable=True:labels=(a-1,b-1):reconcilable_cc=False]
+ ):0.000000[&&NHX:reconcilable=True:labels=(b-1):reconcilable_cc=False],
+ (
+  (
+   b_1_ii:0.000000[&&NHX:labels=(b-1):reconcilable_cc=False],
+   a_2_i:0.000000[&&NHX:labels=(a-2):reconcilable_cc=False]
+  ):0.000000[&&NHX:reconcilable=True:labels=(a-2,b-1):reconcilable_cc=False],
+  a_2_ii:0.000000[&&NHX:labels=(a-2):reconcilable_cc=False]
+ ):0.000000[&&NHX:reconcilable=True:labels=(b-1):reconcilable_cc=False]
+);
+
+LEG:
+b-1	a-2	a-1	
+a-2	
+a-1	
+
+CC:
+a-1	a-2	b-1	False
