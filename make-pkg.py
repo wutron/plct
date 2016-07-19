@@ -13,7 +13,7 @@ files = ["bin",
 
 exclude = [".*\.pyc$",
            "examples/ex_infeasible_transitive.tree",
-           "examples/*.plct"]
+           "examples/.*.plct"]
 
 include = []
 
